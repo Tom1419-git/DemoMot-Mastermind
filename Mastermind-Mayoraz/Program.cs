@@ -72,6 +72,7 @@ namespace Mastermind_Mayoraz
             Console.WriteLine("\t\t\t\t\t║            Thomas Mayoraz              ║");
             Console.WriteLine("\t\t\t\t\t║          PROJET DEMO-MOT ETML          ║");
             Console.WriteLine("\t\t\t\t\t╚════════════════════════════════════════╝");
+            Console.WriteLine();
             Console.ResetColor();
         }
     }
