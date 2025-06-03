@@ -6,14 +6,21 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Mastermind_Mayoraz
 {
     internal class Program
     {
+        static readonly List<char> validColors = new List<char> { 'R', 'B', 'J', 'O', 'V' };
+        static readonly Dictionary<char, ConsoleColor> colorMap = new Dictionary<char, ConsoleColor>
+        {
+            { 'R', ConsoleColor.Red },
+            { 'B', ConsoleColor.Blue },
+            { 'J', ConsoleColor.Yellow },
+            { 'O', ConsoleColor.DarkYellow},
+            { 'V', ConsoleColor.Magenta }
+        };
+        const int MaxAttempts = 10;
         static void Main(string[] args)
         {
 
