@@ -1,0 +1,41 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\pp10xia\\Documents\\GitHub\\DemoMot-Mastermind\\Mastermind-Mayoraz\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{99653DB2-BD39-431D-A171-46882956BB9C}|Mastermind-Mayoraz.csproj|c:\\users\\pp10xia\\documents\\github\\demomot-mastermind\\mastermind-mayoraz\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{99653DB2-BD39-431D-A171-46882956BB9C}|Mastermind-Mayoraz.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\pp10xia\\Documents\\GitHub\\DemoMot-Mastermind\\Mastermind-Mayoraz\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\pp10xia\\Documents\\GitHub\\DemoMot-Mastermind\\Mastermind-Mayoraz\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABYAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-03T06:18:10.46Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
