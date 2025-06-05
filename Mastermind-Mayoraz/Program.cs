@@ -18,11 +18,11 @@ namespace Mastermind_Mayoraz
         // à une couleur correspondante dans la console (ConsoleColor).
         static readonly Dictionary<char, ConsoleColor> colorMap = new Dictionary<char, ConsoleColor>
         {
-            { 'r', ConsoleColor.Red },       // 'r' correspond à la couleur rouge.
-            { 'b', ConsoleColor.Blue },      // 'b' correspond à la couleur bleue.
-            { 'j', ConsoleColor.Yellow },    // 'j' correspond à la couleur jaune.
-            { 'o', ConsoleColor.DarkYellow },// 'o' correspond à la couleur jaune foncé (Orange).
-            { 'v', ConsoleColor.Magenta }    // 'v' correspond à la couleur magenta (violet).
+            { 'R', ConsoleColor.Red },       // 'r' correspond à la couleur rouge.
+            { 'B', ConsoleColor.Blue },      // 'b' correspond à la couleur bleue.
+            { 'J', ConsoleColor.Yellow },    // 'j' correspond à la couleur jaune.
+            { 'O', ConsoleColor.DarkYellow },// 'o' correspond à la couleur jaune foncé (Orange).
+            { 'V', ConsoleColor.Magenta }    // 'v' correspond à la couleur magenta (violet).
         };
 
         // Déclare une constante entière représentant le nombre maximum de tentatives autorisées.
@@ -45,13 +45,13 @@ namespace Mastermind_Mayoraz
                 switch (input)
                 {
                     case "1":
-                        //PlaySolo();
+                        PlaySolo();
                         break;
                     case "2":
                         //PlayTwoPlayers();
                         break;
                     case "3":
-                        //ShowRules();
+                        ShowRules();
                         break;
                     case "4":
                         return;
@@ -70,10 +70,200 @@ namespace Mastermind_Mayoraz
             Console.WriteLine("\t\t\t\t\t║         JEU MASTERMIND CONSOLE         ║");
             Console.WriteLine("\t\t\t\t\t║               CREE PAR                 ║");
             Console.WriteLine("\t\t\t\t\t║            Thomas Mayoraz              ║");
+            Console.WriteLine("\t\t\t\t\t║                MIN1B                   ║");
             Console.WriteLine("\t\t\t\t\t║          PROJET DEMO-MOT ETML          ║");
             Console.WriteLine("\t\t\t\t\t╚════════════════════════════════════════╝");
             Console.WriteLine();
             Console.ResetColor();
+        }
+        static void ShowRules()
+        {
+            Console.Clear();
+            Title();
+            Console.WriteLine("\tBUT : Deviner la combinaison secrète composée de 4 couleurs en 10 essais maximums");
+            Console.Write("\tCOULEURS POSSIBLES : ");
+            char[] colorOrder = { 'R', 'B', 'J', 'O', 'V' };
+            foreach (char c in colorOrder)
+            {
+                Console.BackgroundColor = colorMap[c];
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.Write($" {c} ");
+                Console.ResetColor();
+                Console.Write(" ");
+            }
+            Console.WriteLine();
+            Console.WriteLine("\t\tAprès chaque essai, vous verrez :");
+            Console.WriteLine("\tNombre de pions bien placés (Bonne couleur et bonne position) ");
+            Console.WriteLine("\tNombre de pions mal placés (Bonne couleur mais mauvaise position) ");
+            Console.WriteLine("\t\tIl y a deux rôles principaux dans une partie de Mastermind à deux joueurs :");
+            Console.WriteLine("\tCodeur: Cette personne crée un code secret composé de quatre pions couleur, choisis parmi");
+            Console.WriteLine("\t        les couleurs possibles.Le code est placé secrètement.");
+            Console.WriteLine("\tDécodeur: Cette personne tente de découvrir le code en proposant différentes combinaisons");
+            Console.WriteLine("\t          de pions et de couleurs à chaque tour.Il dispose d'un maximum de dix tours pour y parvenir.");
+            Console.WriteLine("\tSi vous préférez jouer seul, l'ordinateur se chargera de créer la suite de couleurs à deviner.");
+            Console.WriteLine();
+            Console.Write("Appuyez sur une touche pour revenir à l'accueil ");
+            Console.ReadKey();
+
+        }
+
+        static void PlaySolo()
+        {
+            char[] secretCode = GenerateRandomCode();
+            RunGame(secretCode);
+        }
+        static char[] GenerateRandomCode()
+        {
+            Random rand = new Random();
+            char[] code = new char[4];
+            for (int i = 0; i < 4; i++)
+            {
+                code[i] = validColors[rand.Next(validColors.Count)];
+            }
+            return code;
+        }
+        static void RunGame(char[] secretCode)
+        {
+            List<Tuple<char[], int, int>> history = new List<Tuple<char[], int, int>>();
+
+            for (int attempt = 1; attempt <= maxAttempts; attempt++)
+            {
+                Console.Clear();
+                Title();
+                Console.WriteLine($"Essai {attempt} / {maxAttempts}");
+                ShowHistory(history);
+                char[] guess = GetPlayerGuess();
+
+                Tuple<int, int> result = EvaluateGuess(secretCode, guess);
+                history.Add(new Tuple<char[], int, int>(guess, result.Item1, result.Item2));
+
+                if (result.Item1 == 4)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Write("\nFÉLICITATIONS ! Vous avez trouvé la combinaison qui était !");
+                    DisplayColoredCode(secretCode);
+                    Console.ResetColor();
+                    EndGame();
+                    return;
+                }
+            }
+
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\nDÉSOLÉ, vous avez utilisé vos 10 essais.");
+            Console.Write("La combinaison était : ");
+            DisplayColoredCode(secretCode);
+            Console.ResetColor();
+            EndGame();
+        }
+
+        static void ShowHistory(List<Tuple<char[], int, int>> history)
+        {
+            Console.Write("COULEURS POSSIBLES : ");
+            char[] colorOrder = { 'R', 'B', 'J', 'O', 'V' };
+            foreach (char c in colorOrder)
+            {
+                Console.BackgroundColor = colorMap[c];
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.Write($" {c} ");
+                Console.ResetColor();
+                Console.Write(" ");
+            }
+            Console.WriteLine();
+
+            Console.WriteLine("Historique des essais :");
+            foreach (var entry in history)
+            {
+                DisplayColoredCode(entry.Item1);
+                Console.WriteLine($" => Bien placés : {entry.Item2}, Mal placés : {entry.Item3}");
+            }
+            Console.WriteLine();
+        }
+
+        static char[] GetPlayerGuess()
+        {
+            while (true)
+            {
+                Console.Write("Entrez une combinaison (ex: R B J O) : ");
+                string input = Console.ReadLine().ToUpper();
+                string[] parts = input.Split(' ');
+
+                if (parts.Length != 4)
+                {
+                    Console.WriteLine("Veuillez entrer exactement 4 lettres séparées par des espaces.");
+                    continue;
+                }
+
+                char[] guess = new char[4];
+                bool valid = true;
+
+                for (int i = 0; i < 4; i++)
+                {
+                    if (parts[i].Length == 1 && validColors.Contains(parts[i][0]))
+                    {
+                        guess[i] = parts[i][0];
+                    }
+                    else
+                    {
+                        valid = false;
+                        break;
+                    }
+                }
+
+                if (valid) return guess;
+
+                Console.WriteLine("Entrée invalide. Utilisez uniquement R, B, J, O, V.");
+            }
+        }
+        static void DisplayColoredCode(char[] code)
+        {
+            foreach (char c in code)
+            {
+                Console.BackgroundColor = colorMap[c];
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.Write($" {c} ");
+                Console.ResetColor();
+                Console.Write(" ");
+            }
+            Console.WriteLine();
+        }
+        static void EndGame()
+        {
+            Console.WriteLine("\nAppuyez sur une touche pour revenir au menu...");
+            Console.ReadKey();
+        }
+        static Tuple<int, int> EvaluateGuess(char[] secret, char[] guess)
+        {
+            int wellPlaced = 0;
+            int misplaced = 0;
+            bool[] checkedSecret = new bool[4];
+            bool[] checkedGuess = new bool[4];
+
+            for (int i = 0; i < 4; i++)
+            {
+                if (guess[i] == secret[i])
+                {
+                    wellPlaced++;
+                    checkedSecret[i] = true;
+                    checkedGuess[i] = true;
+                }
+            }
+
+            for (int i = 0; i < 4; i++)
+            {
+                if (checkedGuess[i]) continue;
+
+                for (int j = 0; j < 4; j++)
+                {
+                    if (!checkedSecret[j] && guess[i] == secret[j])
+                    {
+                        misplaced++;
+                        checkedSecret[j] = true;
+                        break;
+                    }
+                }
+            }
+
+            return Tuple.Create(wellPlaced, misplaced);
         }
     }
 }
