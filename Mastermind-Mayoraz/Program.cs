@@ -1,6 +1,6 @@
 ﻿/* Title: Mastermind Game
 * Autor: Thomas Mayoraz
-* Last Updated: 03.06.2025
+* Last Updated: 06.06.2025
 * Description: Ce programme permettra à l'utilisateur de jouer au mastermind seul ou contre un ami 
 *              
 */
@@ -62,7 +62,9 @@ namespace Mastermind_Mayoraz
                 }
             }
         }
-
+        /// <summary>
+        /// Méthode qui affiche le titre du jeu 
+        /// </summary>
         static void Title()
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
@@ -76,11 +78,15 @@ namespace Mastermind_Mayoraz
             Console.WriteLine();
             Console.ResetColor();
         }
+        /// <summary>
+        /// Méthode qui affiche les règles du jeu
+        /// </summary>
         static void ShowRules()
         {
             Console.Clear();
             Title();
-            Console.WriteLine("\tBUT : Deviner la combinaison secrète composée de 4 couleurs en 10 essais maximums");
+            Console.WriteLine("\tBUT : Deviner la combinaison secrète générée par l'ordinateur ou par un des joueurs,");
+            Console.WriteLine("\t      composée de 4 couleurs en 10 essais maximums");
             Console.Write("\tCOULEURS POSSIBLES : ");
             char[] colorOrder = { 'R', 'B', 'J', 'O', 'V' };
             foreach (char c in colorOrder)
@@ -92,26 +98,32 @@ namespace Mastermind_Mayoraz
                 Console.Write(" ");
             }
             Console.WriteLine();
-            Console.WriteLine("\t\tAprès chaque essai, vous verrez :");
+            Console.WriteLine("\t\tAprès chaque essai, vous verrez sur votre écran :");
             Console.WriteLine("\tNombre de pions bien placés (Bonne couleur et bonne position) ");
             Console.WriteLine("\tNombre de pions mal placés (Bonne couleur mais mauvaise position) ");
             Console.WriteLine("\t\tIl y a deux rôles principaux dans une partie de Mastermind à deux joueurs :");
             Console.WriteLine("\tCodeur: Cette personne crée un code secret composé de quatre pions couleur, choisis parmi");
-            Console.WriteLine("\t        les couleurs possibles.Le code est placé secrètement.");
+            Console.WriteLine("\t        les couleurs possibles. Le code est placé secrètement.");
             Console.WriteLine("\tDécodeur: Cette personne tente de découvrir le code en proposant différentes combinaisons");
-            Console.WriteLine("\t          de pions et de couleurs à chaque tour.Il dispose d'un maximum de dix tours pour y parvenir.");
+            Console.WriteLine("\t          de pions et de couleurs à chaque tour. Il dispose d'un maximum de dix tours pour y parvenir.");
             Console.WriteLine("\tSi vous préférez jouer seul, l'ordinateur se chargera de créer la suite de couleurs à deviner.");
             Console.WriteLine();
-            Console.Write("Appuyez sur une touche pour revenir à l'accueil ");
+            Console.Write("Appuyez sur une touche pour revenir à l'accueil et choisir votre mode de jeu ");
             Console.ReadKey();
 
         }
-
+        /// <summary>
+        /// Méthode qui permet de jouer tout seul
+        /// </summary>
         static void PlaySolo()
         {
             char[] secretCode = GenerateRandomCode();
             RunGame(secretCode);
         }
+        /// <summary>
+        /// Méthode qui permet de générer le code de 4 couleurs aléatoirement
+        /// </summary>
+        /// <returns> un tableau en Char de 4 lettres parmis 'R', 'B', 'J', 'O', 'V' </returns>
         static char[] GenerateRandomCode()
         {
             Random rand = new Random();
@@ -122,6 +134,10 @@ namespace Mastermind_Mayoraz
             }
             return code;
         }
+        /// <summary>
+        /// Méthode qui lance la game 
+        /// </summary>
+        /// <param name="secretCode">tableau du code généré aléatoirement ou par l'utilisateur 2</param>
         static void RunGame(char[] secretCode)
         {
             List<Tuple<char[], int, int>> history = new List<Tuple<char[], int, int>>();
@@ -155,7 +171,10 @@ namespace Mastermind_Mayoraz
             Console.ResetColor();
             EndGame();
         }
-
+        /// <summary>
+        /// Méthode qui permet d'afficher l'historique des coups effectués par le joueur
+        /// </summary>
+        /// <param name="history">historique de jeu</param>
         static void ShowHistory(List<Tuple<char[], int, int>> history)
         {
             Console.Write("COULEURS POSSIBLES : ");
@@ -179,6 +198,10 @@ namespace Mastermind_Mayoraz
             Console.WriteLine();
         }
 
+        /// <summary>
+        /// Méthode qui permet au joueur de rentrer ses valeurs
+        /// </summary>
+        /// <returns> un tableau contenant l'entrée (valide) de l'utilisateur</returns>
         static char[] GetPlayerGuess()
         {
             while (true)
@@ -189,7 +212,7 @@ namespace Mastermind_Mayoraz
 
                 if (parts.Length != 4)
                 {
-                    Console.WriteLine("Veuillez entrer exactement 4 lettres séparées par des espaces.");
+                    Console.WriteLine("Veuillez entrer exactement 4 lettres de la liste en couleur ci-dessus séparées par des espaces.");
                     continue;
                 }
 
@@ -214,6 +237,10 @@ namespace Mastermind_Mayoraz
                 Console.WriteLine("Entrée invalide. Utilisez uniquement R, B, J, O, V.");
             }
         }
+        /// <summary>
+        /// Méthode qui affiche les initiales des couleurs avec le fond de l'initiale dans la couleur correspondante
+        /// </summary>
+        /// <param name="code">le tableau en char qui contient les lettres qu'il faut colorer</param>
         static void DisplayColoredCode(char[] code)
         {
             foreach (char c in code)
@@ -226,11 +253,20 @@ namespace Mastermind_Mayoraz
             }
             Console.WriteLine();
         }
+        /// <summary>
+        /// Méthode de fin de partie (affiche un texte et retourne au menu quand on clique sur une touche) 
+        /// </summary>
         static void EndGame()
         {
             Console.WriteLine("\nAppuyez sur une touche pour revenir au menu...");
             Console.ReadKey();
         }
+        /// <summary>
+        /// Méthode qui vérifie les entrées de l'utilisateur pour voir si celles-ci correspondent au tableau initial 
+        /// </summary>
+        /// <param name="secret">tableau initial qui contient les couleurs à deviner</param>
+        /// <param name="guess">tableau qui contient les couleurs entrées par l'utilisateur</param>
+        /// <returns> un tuple qui contient le nombre de couleurs bien placées et le nombre de couleurs mal placées mais qui sont dans le code secret</returns>
         static Tuple<int, int> EvaluateGuess(char[] secret, char[] guess)
         {
             int wellPlaced = 0;
