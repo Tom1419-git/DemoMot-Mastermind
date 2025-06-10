@@ -32,9 +32,14 @@ namespace Mastermind_Mayoraz
         {
             while (true)
             {
+                //Définir la fenêtre de la console à sa taille maximale          
+                Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
                 Console.Clear();
                 Title();
-                Console.WriteLine("Choisissez un mode :");
+                Console.WriteLine();
+                Console.WriteLine("Bienvenue dans mon projet du jeu Mastermind réalisé à l'ETML en 2025 dans le cadre du module Demo-Mot de fin d'année");
+                Console.WriteLine();
+                Console.WriteLine("Choisissez un mode de jeu :");
                 Console.WriteLine("1 - Mode Solo");
                 Console.WriteLine("2 - Mode Deux Joueurs");
                 Console.WriteLine("3 - Règles du jeu");
@@ -68,16 +73,22 @@ namespace Mastermind_Mayoraz
         static void Title()
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine("\t\t\t\t\t╔════════════════════════════════════════╗");
-            Console.WriteLine("\t\t\t\t\t║         JEU MASTERMIND CONSOLE         ║");
-            Console.WriteLine("\t\t\t\t\t║               CREE PAR                 ║");
-            Console.WriteLine("\t\t\t\t\t║            Thomas Mayoraz              ║");
-            Console.WriteLine("\t\t\t\t\t║                MIN1B                   ║");
-            Console.WriteLine("\t\t\t\t\t║          PROJET DEMO-MOT ETML          ║");
-            Console.WriteLine("\t\t\t\t\t╚════════════════════════════════════════╝");
+            Console.WriteLine("\t\t\t╔══════════════════════════════════════════════════════════════════════════════════════════╗");
+            Console.WriteLine("\t\t\t║                                                                                          ║");
+            Console.WriteLine("\t\t\t║   ███╗   ███╗ █████╗ ███████╗████████╗███████╗██████╗ ███╗   ███╗██╗███╗   ██╗██████╗    ║");
+            Console.WriteLine("\t\t\t║   ████╗ ████║██╔══██╗██╔════╝╚══██╔══╝██╔════╝██╔══██╗████╗ ████║██║████╗  ██║██╔══██╗   ║");
+            Console.WriteLine("\t\t\t║   ██╔████╔██║███████║███████╗   ██║   █████╗  ██████╔╝██╔████╔██║██║██╔██╗ ██║██║  ██║   ║");
+            Console.WriteLine("\t\t\t║   ██║╚██╔╝██║██╔══██║╚════██║   ██║   ██╔══╝  ██╔══██╗██║╚██╔╝██║██║██║╚██╗██║██║  ██║   ║");
+            Console.WriteLine("\t\t\t║   ██║ ╚═╝ ██║██║  ██║███████║   ██║   ███████╗██║  ██║██║ ╚═╝ ██║██║██║ ╚████║██████╔╝   ║");
+            Console.WriteLine("\t\t\t║   ╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═════╝    ║");
+            Console.WriteLine("\t\t\t║                            CRÉÉ PAR : Thomas MAYORAZ (MIN1B)                             ║");
+            Console.WriteLine("\t\t\t║                                PROJET : Démo-Mot - 2025                                  ║");
+            Console.WriteLine("\t\t\t║                                                                                          ║");
+            Console.WriteLine("\t\t\t╚══════════════════════════════════════════════════════════════════════════════════════════╝");
             Console.WriteLine();
             Console.ResetColor();
         }
+
         /// <summary>
         /// Méthode qui affiche les règles du jeu
         /// </summary>
@@ -98,16 +109,22 @@ namespace Mastermind_Mayoraz
                 Console.Write(" ");
             }
             Console.WriteLine();
+            Console.WriteLine();
             Console.WriteLine("\t\tAprès chaque essai, vous verrez sur votre écran :");
             Console.WriteLine("\tNombre de pions bien placés (Bonne couleur et bonne position) ");
             Console.WriteLine("\tNombre de pions mal placés (Bonne couleur mais mauvaise position) ");
+            Console.WriteLine();
             Console.WriteLine("\t\tIl y a deux rôles principaux dans une partie de Mastermind à deux joueurs :");
             Console.WriteLine("\tCodeur: Cette personne crée un code secret composé de quatre pions couleur, choisis parmi");
             Console.WriteLine("\t        les couleurs possibles. Le code est placé secrètement.");
             Console.WriteLine("\tDécodeur: Cette personne tente de découvrir le code en proposant différentes combinaisons");
             Console.WriteLine("\t          de pions et de couleurs à chaque tour. Il dispose d'un maximum de dix tours pour y parvenir.");
-            Console.WriteLine("\tSi vous préférez jouer seul, l'ordinateur se chargera de créer la suite de couleurs à deviner.");
             Console.WriteLine();
+            Console.WriteLine("\tSi vous préférez jouer seul, l'ordinateur se chargera de créer la suite de couleurs à deviner.");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\t▲ Attention ▲ - Chaque couleur peut se retrouver plusieurs fois dans la combinaison secrète");
+            Console.WriteLine();
+            Console.ResetColor();
             Console.Write("Appuyez sur une touche pour revenir à l'accueil et choisir votre mode de jeu ");
             Console.ReadKey();
 
@@ -156,7 +173,7 @@ namespace Mastermind_Mayoraz
                 if (result.Item1 == 4)
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.Write("\nFÉLICITATIONS ! Vous avez trouvé la combinaison qui était !");
+                    Console.Write("\nFÉLICITATIONS ! Vous avez trouvé la combinaison secrète qui était !");
                     DisplayColoredCode(secretCode);
                     Console.ResetColor();
                     EndGame();
@@ -166,7 +183,7 @@ namespace Mastermind_Mayoraz
 
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("\nDÉSOLÉ, vous avez utilisé vos 10 essais.");
-            Console.Write("La combinaison était : ");
+            Console.Write("La combinaison secrète était : ");
             DisplayColoredCode(secretCode);
             Console.ResetColor();
             EndGame();
@@ -264,7 +281,7 @@ namespace Mastermind_Mayoraz
         /// <summary>
         /// Méthode qui vérifie les entrées de l'utilisateur pour voir si celles-ci correspondent au tableau initial 
         /// </summary>
-        /// <param name="secret">tableau initial qui contient les couleurs à deviner</param>
+        /// <param name="secret">tableau initial qui contient les couleurs à deviner aléatoire ou créé par le joueur 2</param>
         /// <param name="guess">tableau qui contient les couleurs entrées par l'utilisateur</param>
         /// <returns> un tuple qui contient le nombre de couleurs bien placées et le nombre de couleurs mal placées mais qui sont dans le code secret</returns>
         static Tuple<int, int> EvaluateGuess(char[] secret, char[] guess)
