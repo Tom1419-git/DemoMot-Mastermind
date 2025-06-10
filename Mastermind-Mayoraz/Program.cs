@@ -81,6 +81,7 @@ namespace Mastermind_Mayoraz
             Console.WriteLine("\t\t\t║   ██║╚██╔╝██║██╔══██║╚════██║   ██║   ██╔══╝  ██╔══██╗██║╚██╔╝██║██║██║╚██╗██║██║  ██║   ║");
             Console.WriteLine("\t\t\t║   ██║ ╚═╝ ██║██║  ██║███████║   ██║   ███████╗██║  ██║██║ ╚═╝ ██║██║██║ ╚████║██████╔╝   ║");
             Console.WriteLine("\t\t\t║   ╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═════╝    ║");
+            Console.WriteLine("\t\t\t║                                                                                          ║");
             Console.WriteLine("\t\t\t║                            CRÉÉ PAR : Thomas MAYORAZ (MIN1B)                             ║");
             Console.WriteLine("\t\t\t║                                PROJET : Démo-Mot - 2025                                  ║");
             Console.WriteLine("\t\t\t║                                                                                          ║");
