@@ -1,11 +1,12 @@
 ﻿/* Title: Mastermind Game
 * Autor: Thomas Mayoraz
-* Last Updated: 06.06.2025
+* Last Updated: 12.06.2025
 * Description: Ce programme permettra à l'utilisateur de jouer au mastermind seul ou contre un ami 
 *              
 */
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Mastermind_Mayoraz
 {
@@ -53,7 +54,7 @@ namespace Mastermind_Mayoraz
                         PlaySolo();
                         break;
                     case "2":
-                        //PlayTwoPlayers();
+                        PlayTwoPlayers();
                         break;
                     case "3":
                         ShowRules();
@@ -139,6 +140,48 @@ namespace Mastermind_Mayoraz
             RunGame(secretCode);
         }
         /// <summary>
+        /// Méthode pour jouer à deux joueurs
+        /// </summary>
+        static void PlayTwoPlayers()
+        {
+            Console.Clear();
+            Title();
+            Console.Write("JOUEUR 1 : Entrez la combinaison secrète contenant les lettres ");
+            char[] colorOrder = { 'R', 'B', 'J', 'O', 'V' };
+            foreach (char c in colorOrder)
+            {
+                Console.BackgroundColor = colorMap[c];
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.Write($" {c} ");
+                Console.ResetColor();
+                Console.Write(" ");
+            }
+            Console.WriteLine("sans espaces: ");
+            Console.WriteLine("Seules les lettres de la liste ci-dessus seront comptabilisées");
+            Console.WriteLine("(Les lettres ne s'afficheront pas pour garder le secret)");
+            Console.Write("Votre code secret :");
+            char[] secretCode = new char[4];
+            int i = 0;
+            while (i < 4)
+            {
+                ConsoleKeyInfo key = Console.ReadKey(true);
+                char input = Char.ToUpper(key.KeyChar);
+                if (validColors.Contains(input))
+                {
+                    secretCode[i++] = input;
+                    Console.Write("*");
+                }
+            }
+
+            Console.WriteLine("\nCombinaison enregistrée. Passez au JOUEUR 2 qui devra deviner le code entré.");
+            Console.WriteLine("Appuyez sur une touche pour continuer...");
+            Console.ReadKey();
+            Console.Clear();
+            RunGame(secretCode);
+
+
+        }
+        /// <summary>
         /// Méthode qui permet de générer le code de 4 couleurs aléatoirement
         /// </summary>
         /// <returns> un tableau en Char de 4 lettres parmis 'R', 'B', 'J', 'O', 'V' </returns>
@@ -153,11 +196,14 @@ namespace Mastermind_Mayoraz
             return code;
         }
         /// <summary>
-        /// Méthode qui lance la game 
+        /// Méthode qui lance la partie 
         /// </summary>
         /// <param name="secretCode">tableau du code généré aléatoirement ou par l'utilisateur 2</param>
         static void RunGame(char[] secretCode)
         {
+            Stopwatch stopwatch = new Stopwatch(); // Démarre le chrono
+            stopwatch.Start();
+
             List<Tuple<char[], int, int>> history = new List<Tuple<char[], int, int>>();
 
             for (int attempt = 1; attempt <= maxAttempts; attempt++)
@@ -173,22 +219,31 @@ namespace Mastermind_Mayoraz
 
                 if (result.Item1 == 4)
                 {
+                    stopwatch.Stop(); // Arrête le chrono
+                    TimeSpan timeTaken = stopwatch.Elapsed;
+
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.Write("\nFÉLICITATIONS ! Vous avez trouvé la combinaison secrète qui était !");
+                    Console.Write("\nFÉLICITATIONS ! Vous avez trouvé la combinaison secrète qui était : ");
                     DisplayColoredCode(secretCode);
+                    Console.WriteLine($"Temps écoulé : {timeTaken.Minutes} min {timeTaken.Seconds} sec");
                     Console.ResetColor();
                     EndGame();
                     return;
                 }
             }
 
+            stopwatch.Stop(); // Arrêt aussi si le joueur perd
+            TimeSpan totalTime = stopwatch.Elapsed;
+
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("\nDÉSOLÉ, vous avez utilisé vos 10 essais.");
             Console.Write("La combinaison secrète était : ");
             DisplayColoredCode(secretCode);
+            Console.WriteLine($"Temps écoulé : {totalTime.Minutes} min {totalTime.Seconds} sec");
             Console.ResetColor();
             EndGame();
         }
+
         /// <summary>
         /// Méthode qui permet d'afficher l'historique des coups effectués par le joueur
         /// </summary>
@@ -206,15 +261,36 @@ namespace Mastermind_Mayoraz
                 Console.Write(" ");
             }
             Console.WriteLine();
+            Console.WriteLine("Historique des essais :\n");
 
-            Console.WriteLine("Historique des essais :");
             foreach (var entry in history)
             {
-                DisplayColoredCode(entry.Item1);
-                Console.WriteLine($" => Bien placés : {entry.Item2}, Mal placés : {entry.Item3}");
+                char[] guess = entry.Item1;
+                int wellPlaced = entry.Item2;
+                int misplaced = entry.Item3;
+
+                foreach (char c in guess)
+                {
+                    Console.BackgroundColor = colorMap[c];
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.Write($" {c} ");
+                    Console.ResetColor();
+                    Console.Write(" ");
+                }
+
+                Console.Write($"=> ");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write($"Bien placés : {wellPlaced}  ");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.Write($"Mal placés : {misplaced}");
+                Console.ResetColor();
+                Console.WriteLine();
+                Console.WriteLine();
             }
+
             Console.WriteLine();
         }
+
 
         /// <summary>
         /// Méthode qui permet au joueur de rentrer ses valeurs
@@ -224,35 +300,38 @@ namespace Mastermind_Mayoraz
         {
             while (true)
             {
-                Console.Write("Entrez une combinaison (ex: R B J O) : ");
-                string input = Console.ReadLine().ToUpper();
-                string[] parts = input.Split(' ');
+                Console.Write("Entrez une combinaison (ex: RBJO ou R B J O) : ");
+                string input = Console.ReadLine().ToUpper().Replace(" ", "");
 
-                if (parts.Length != 4)
+                if (input.Length != 4)
                 {
-                    Console.WriteLine("Veuillez entrer exactement 4 lettres de la liste en couleur ci-dessus séparées par des espaces.");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("▲ - Vous devez entrer exactement 4 lettres représentant des couleurs.");
+                    Console.ResetColor();
                     continue;
                 }
 
                 char[] guess = new char[4];
-                bool valid = true;
+                bool allValid = true;
 
                 for (int i = 0; i < 4; i++)
                 {
-                    if (parts[i].Length == 1 && validColors.Contains(parts[i][0]))
+                    char c = input[i];
+                    if (!validColors.Contains(c))
                     {
-                        guess[i] = parts[i][0];
-                    }
-                    else
-                    {
-                        valid = false;
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"▲ - '{c}' n'est pas une couleur valide. Utilisez seulement R, B, J, O, V.");
+                        Console.ResetColor();
+                        allValid = false;
                         break;
                     }
+                    guess[i] = c;
                 }
 
-                if (valid) return guess;
+                if (allValid)
+                    return guess;
 
-                Console.WriteLine("Entrée invalide. Utilisez uniquement R, B, J, O, V.");
+                Console.WriteLine("Veuillez réessayer...\n");
             }
         }
         /// <summary>
