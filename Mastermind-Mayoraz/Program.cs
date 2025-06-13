@@ -7,41 +7,38 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 
 namespace Mastermind_Mayoraz
 {
     internal class Program
     {
-        // Déclare une liste statique contenant les couleurs valides représentées par des caractères.
-        // 'R' pour rouge, 'B' pour bleu, 'J' pour jaune, 'O' pour orange (ou jaune foncé), 'V' pour violet
         static readonly List<char> validColors = new List<char> { 'R', 'B', 'J', 'O', 'V' };
-        // Déclare un dictionnaire statique qui enregistre chaque caractère de couleur valide
-        // à une couleur correspondante dans la console (ConsoleColor).
         static readonly Dictionary<char, ConsoleColor> colorMap = new Dictionary<char, ConsoleColor>
         {
-            { 'R', ConsoleColor.Red },       // 'r' correspond à la couleur rouge.
-            { 'B', ConsoleColor.Blue },      // 'b' correspond à la couleur bleue.
-            { 'J', ConsoleColor.Yellow },    // 'j' correspond à la couleur jaune.
-            { 'O', ConsoleColor.DarkYellow },// 'o' correspond à la couleur jaune foncé (Orange).
-            { 'V', ConsoleColor.Magenta }    // 'v' correspond à la couleur magenta (violet).
+            { 'R', ConsoleColor.Red },
+            { 'B', ConsoleColor.Blue },
+            { 'J', ConsoleColor.Yellow },
+            { 'O', ConsoleColor.DarkYellow },
+            { 'V', ConsoleColor.Magenta }
         };
 
-        // Déclare une constante entière représentant le nombre maximum de tentatives autorisées.
-        // Cette valeur est fixe et ne peut pas être modifiée.
         const int maxAttempts = 10;
-
-        
+        const string statsFileName = "mastermind_stats.txt";
 
         // Statistiques globales
         static int gamesWon = 0;
         static int gamesLost = 0;
         static TimeSpan totalTime = TimeSpan.Zero;
-        const string statsFileName = "mastermind_stats.txt";
+
         static void Main(string[] args)
         {
+            // Charger les statistiques au démarrage
+            LoadStats();
+
             while (true)
             {
-                //Définir la fenêtre de la console à sa taille maximale          
+                Console.CursorVisible = true;
                 Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
                 Console.Clear();
                 Title();
@@ -55,6 +52,7 @@ namespace Mastermind_Mayoraz
                 Console.WriteLine("4 - Règles du jeu");
                 Console.WriteLine("5 - Statistiques");
                 Console.WriteLine("6 - Quitter");
+
                 Console.Write("Votre choix : ");
                 string input = Console.ReadLine();
 
@@ -68,16 +66,16 @@ namespace Mastermind_Mayoraz
                         break;
                     case "3":
                         Console.CursorVisible = false;
-                        //PlayChallenge();                    to do 
+                        PlayChallenge();
                         break;
                     case "4":
                         ShowRules();
                         break;
                     case "5":
-                        //ShowStats();                        to do 
+                        ShowStats();
                         break;
                     case "6":
-                        //SaveStats();                        to do
+                        SaveStats();
                         return;
                     default:
                         Console.WriteLine("Choix invalide. Appuyez sur une touche pour recommencer.");
@@ -86,9 +84,7 @@ namespace Mastermind_Mayoraz
                 }
             }
         }
-        /// <summary>
-        /// Méthode qui affiche le titre du jeu 
-        /// </summary>
+
         static void Title()
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
@@ -109,9 +105,6 @@ namespace Mastermind_Mayoraz
             Console.ResetColor();
         }
 
-        /// <summary>
-        /// Méthode qui affiche les règles du jeu
-        /// </summary>
         static void ShowRules()
         {
             Console.Clear();
@@ -147,19 +140,20 @@ namespace Mastermind_Mayoraz
             Console.ResetColor();
             Console.Write("Appuyez sur une touche pour revenir à l'accueil et choisir votre mode de jeu ");
             Console.ReadKey();
-
         }
-        /// <summary>
-        /// Méthode qui permet de jouer tout seul
-        /// </summary>
+
+        static void PlayChallenge()
+        {
+            char[] secretCode = GenerateRandomCode();
+            RunGame(secretCode, challengeMode: true);
+        }
+
         static void PlaySolo()
         {
             char[] secretCode = GenerateRandomCode();
             RunGame(secretCode);
         }
-        /// <summary>
-        /// Méthode pour jouer à deux joueurs
-        /// </summary>
+
         static void PlayTwoPlayers()
         {
             Console.Clear();
@@ -174,35 +168,65 @@ namespace Mastermind_Mayoraz
                 Console.ResetColor();
                 Console.Write(" ");
             }
-            Console.WriteLine("sans espaces: ");
-            Console.WriteLine("Seules les lettres de la liste ci-dessus seront comptabilisées");
-            Console.WriteLine("(Les lettres ne s'afficheront pas pour garder le secret)");
-            Console.Write("Votre code secret :");
-            char[] secretCode = new char[4];
-            int i = 0;
-            while (i < 4)
-            {
-                ConsoleKeyInfo key = Console.ReadKey(true);
-                char input = Char.ToUpper(key.KeyChar);
-                if (validColors.Contains(input))
-                {
-                    secretCode[i++] = input;
-                    Console.Write("*");
-                }
-            }
+            Console.WriteLine();
+            Console.WriteLine("Utilisez les touches pour saisir votre code secret :");
+            Console.CursorVisible = false;
 
+            char[] secretCode = GetSecretCodeInput();
+
+            Console.CursorVisible = true;
             Console.WriteLine("\nCombinaison enregistrée. Passez au JOUEUR 2 qui devra deviner le code entré.");
             Console.WriteLine("Appuyez sur une touche pour continuer...");
             Console.ReadKey();
             Console.Clear();
             RunGame(secretCode);
-
-
         }
-        /// <summary>
-        /// Méthode qui permet de générer le code de 4 couleurs aléatoirement
-        /// </summary>
-        /// <returns> un tableau en Char de 4 lettres parmis 'R', 'B', 'J', 'O', 'V' </returns>
+
+        static char[] GetSecretCodeInput()
+        {
+            char[] secretCode = new char[4];
+            int index = 0;
+
+
+
+            while (index < 4)
+            {
+                // Afficher la saisie en cours avec des étoiles simples
+                Console.Write("\rCode secret : ");
+                for (int i = 0; i < index; i++)
+                {
+                    Console.Write("* ");
+                }
+                for (int i = index; i < 4; i++)
+                {
+                    Console.Write("_ ");
+                }
+
+                ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+                char keyChar = Char.ToUpper(keyInfo.KeyChar);
+
+                if (keyInfo.Key == ConsoleKey.Backspace && index > 0)
+                {
+                    index--;
+                    secretCode[index] = '\0';
+                }
+                else if (validColors.Contains(keyChar) && index < 4)
+                {
+                    secretCode[index++] = keyChar;
+                }
+            }
+
+            // Afficher le code final avec toutes les étoiles
+            Console.Write("\rCode secret : ");
+            for (int i = 0; i < 4; i++)
+            {
+                Console.Write("* ");
+            }
+            Console.WriteLine();
+            return secretCode;
+        }
+
+
         static char[] GenerateRandomCode()
         {
             Random rand = new Random();
@@ -213,13 +237,10 @@ namespace Mastermind_Mayoraz
             }
             return code;
         }
-        /// <summary>
-        /// Méthode qui lance la partie 
-        /// </summary>
-        /// <param name="secretCode">tableau du code généré aléatoirement ou par l'utilisateur 2</param>
-        static void RunGame(char[] secretCode)
+
+        static void RunGame(char[] secretCode, bool challengeMode = false)
         {
-            Stopwatch stopwatch = new Stopwatch(); // Démarre le chrono
+            Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
             List<Tuple<char[], int, int>> history = new List<Tuple<char[], int, int>>();
@@ -228,44 +249,97 @@ namespace Mastermind_Mayoraz
             {
                 Console.Clear();
                 Title();
+
+                if (challengeMode)
+                {
+                    TimeSpan remaining = TimeSpan.FromMinutes(3) - stopwatch.Elapsed;
+                    if (remaining <= TimeSpan.Zero)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("\n TEMPS ÉCOULÉ ! Vous avez dépassé la limite de 3 minutes.");
+                        Console.Write("La combinaison secrète était : ");
+                        DisplayColoredCode(secretCode);
+                        Console.ResetColor();
+                        gamesLost++;
+                        SaveStats(); // Sauvegarder en cas de timeout pendant la saisie
+                        SaveStats(); // Sauvegarder en cas de timeout
+                        EndGame();
+                        return;
+                    }
+                }
+
                 Console.WriteLine($"Essai {attempt} / {maxAttempts}");
                 ShowHistory(history);
-                char[] guess = GetPlayerGuess();
+                char[] guess;
+
+                if (challengeMode)
+                {
+                    Console.CursorVisible = false;
+                    guess = GetPlayerGuess(true, stopwatch);
+                    if (guess == null)
+                    {
+                        // Temps écoulé pendant la saisie
+                        Console.Clear();
+                        Title();
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("\n TEMPS ÉCOULÉ ! Vous avez dépassé la limite de 3 minutes.");
+                        Console.Write("La combinaison secrète était : ");
+                        DisplayColoredCode(secretCode);
+                        Console.ResetColor();
+                        gamesLost++;
+                        EndGame();
+                        return;
+                    }
+                }
+                else
+                {
+                    Console.CursorVisible = false;
+                    guess = GetPlayerGuess();
+                }
 
                 Tuple<int, int> result = EvaluateGuess(secretCode, guess);
                 history.Add(new Tuple<char[], int, int>(guess, result.Item1, result.Item2));
 
                 if (result.Item1 == 4)
                 {
-                    stopwatch.Stop(); // Arrête le chrono
-                    TimeSpan timeTaken = stopwatch.Elapsed;
+                    stopwatch.Stop();
+                    TimeSpan timeTakenVictory = stopwatch.Elapsed;
 
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.Write("\nFÉLICITATIONS ! Vous avez trouvé la combinaison secrète qui était : ");
                     DisplayColoredCode(secretCode);
-                    Console.WriteLine($"Temps écoulé : {timeTaken.Minutes} min {timeTaken.Seconds} sec");
+                    Console.WriteLine($"Temps écoulé : {timeTakenVictory.Minutes} min {timeTakenVictory.Seconds} sec");
                     Console.ResetColor();
+
+                    gamesWon++;
+                    totalTime += timeTakenVictory;
+                    SaveStats(); // Sauvegarder après chaque victoire
+
+                    Console.CursorVisible = true;
                     EndGame();
                     return;
                 }
             }
 
-            stopwatch.Stop(); // Arrêt aussi si le joueur perd
-            TimeSpan totalTime = stopwatch.Elapsed;
+            // Si on arrive ici, ça veut dire que le joueur n'a pas trouvé en maxAttempts
+            stopwatch.Stop();
+            TimeSpan timeTakenDefeat = stopwatch.Elapsed;
 
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("\nDÉSOLÉ, vous avez utilisé vos 10 essais.");
             Console.Write("La combinaison secrète était : ");
             DisplayColoredCode(secretCode);
-            Console.WriteLine($"Temps écoulé : {totalTime.Minutes} min {totalTime.Seconds} sec");
+            Console.WriteLine($"Temps écoulé : {timeTakenDefeat.Minutes} min {timeTakenDefeat.Seconds} sec");
             Console.ResetColor();
+
+            gamesLost++;
+            totalTime += timeTakenDefeat;
+            SaveStats(); // Sauvegarder après chaque défaite
+
+            Console.CursorVisible = true;
             EndGame();
         }
 
-        /// <summary>
-        /// Méthode qui permet d'afficher l'historique des coups effectués par le joueur
-        /// </summary>
-        /// <param name="history">historique de jeu</param>
         static void ShowHistory(List<Tuple<char[], int, int>> history)
         {
             Console.Write("COULEURS POSSIBLES : ");
@@ -305,57 +379,167 @@ namespace Mastermind_Mayoraz
                 Console.WriteLine();
                 Console.WriteLine();
             }
-
             Console.WriteLine();
         }
 
-
-        /// <summary>
-        /// Méthode qui permet au joueur de rentrer ses valeurs
-        /// </summary>
-        /// <returns> un tableau contenant l'entrée (valide) de l'utilisateur</returns>
-        static char[] GetPlayerGuess()
+        static char[] GetPlayerGuess(bool challengeMode = false, Stopwatch stopwatch = null)
         {
-            while (true)
+            char[] guess = new char[4];
+            int index = 0;
+
+            if (!challengeMode)
             {
-                Console.Write("Entrez une combinaison (ex: RBJO ou R B J O) : ");
-                string input = Console.ReadLine().ToUpper().Replace(" ", "");
+                // Mode normal - saisie interactive colorée sans contrainte de temps
+                Console.WriteLine("Entrez votre proposition (utilisez les touches R, B, J, O, V) :");
 
-                if (input.Length != 4)
+                while (true)
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("▲ - Vous devez entrer exactement 4 lettres représentant des couleurs.");
-                    Console.ResetColor();
-                    continue;
-                }
-
-                char[] guess = new char[4];
-                bool allValid = true;
-
-                for (int i = 0; i < 4; i++)
-                {
-                    char c = input[i];
-                    if (!validColors.Contains(c))
+                    // Afficher la saisie en cours
+                    Console.Write("\rProposition : ");
+                    for (int i = 0; i < index; i++)
                     {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"▲ - '{c}' n'est pas une couleur valide. Utilisez seulement R, B, J, O, V.");
+                        Console.BackgroundColor = colorMap[guess[i]];
+                        Console.ForegroundColor = ConsoleColor.Black;
+                        Console.Write($" {guess[i]} ");
                         Console.ResetColor();
-                        allValid = false;
-                        break;
+                        Console.Write(" ");
                     }
-                    guess[i] = c;
+                    for (int i = index; i < 4; i++)
+                    {
+                        Console.Write("_ ");
+                    }
+
+                    ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+                    char keyChar = Char.ToUpper(keyInfo.KeyChar);
+
+                    if (keyInfo.Key == ConsoleKey.Backspace && index > 0)
+                    {
+                        index--;
+                        guess[index] = '\0';
+                    }
+                    else if (validColors.Contains(keyChar) && index < 4)
+                    {
+                        guess[index++] = keyChar;
+                    }
+                    else if (keyInfo.Key == ConsoleKey.Enter && index == 4)
+                    {
+                        Console.WriteLine();
+                        return guess;
+                    }
                 }
+            }
+            else
+            {
+                // Mode Challenge avec minuteur en direct
+                if (stopwatch == null) throw new ArgumentNullException(nameof(stopwatch));
 
-                if (allValid)
-                    return guess;
+                Console.WriteLine("Entrez votre proposition (4 lettres, sans espaces) : ");
 
-                Console.WriteLine("Veuillez réessayer...\n");
+                while (true)
+                {
+                    // Afficher le temps restant en haut
+                    TimeSpan remaining = TimeSpan.FromMinutes(3) - stopwatch.Elapsed;
+                    if (remaining <= TimeSpan.Zero)
+                    {
+                        return null; // Temps écoulé, on gère ça en appelant la méthode
+                    }
+
+                    // Sauvegarder position curseur
+                    int curLeft = Console.CursorLeft;
+                    int curTop = Console.CursorTop;
+
+                    // Afficher temps restant
+                    Console.SetCursorPosition(14, 14);
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.Write($"Temps restant : {remaining.Minutes:D2} min {remaining.Seconds:D2} sec   ");
+                    Console.ResetColor();
+
+                    // Rétablir position curseur pour saisir la lettre
+                    Console.SetCursorPosition(curLeft, curTop);
+
+                    // Afficher la saisie en cours
+                    Console.Write("\rProposition : ");
+                    for (int i = 0; i < index; i++)
+                    {
+                        Console.BackgroundColor = colorMap[guess[i]];
+                        Console.ForegroundColor = ConsoleColor.Black;
+                        Console.Write($" {guess[i]} ");
+                        Console.ResetColor();
+                        Console.Write(" ");
+                    }
+                    for (int i = index; i < 4; i++)
+                    {
+                        Console.Write("_ ");
+                    }
+
+                    // Lire la touche
+                    if (Console.KeyAvailable)
+                    {
+                        ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+                        char keyChar = Char.ToUpper(keyInfo.KeyChar);
+
+                        if (keyInfo.Key == ConsoleKey.Backspace && index > 0)
+                        {
+                            index--;
+                            guess[index] = '\0';
+                        }
+                        else if (validColors.Contains(keyChar) && index < 4)
+                        {
+                            guess[index++] = keyChar;
+                        }
+                        else if (keyInfo.Key == ConsoleKey.Enter && index == 4)
+                        {
+                            Console.WriteLine();
+                            return guess;
+                        }
+                        // Sinon ignorer la touche
+                    }
+
+                    // Petite pause pour éviter de trop charger le CPU
+                    System.Threading.Thread.Sleep(50);
+                }
             }
         }
-        /// <summary>
-        /// Méthode qui affiche les initiales des couleurs avec le fond de l'initiale dans la couleur correspondante
-        /// </summary>
-        /// <param name="code">le tableau en char qui contient les lettres qu'il faut colorer</param>
+
+        static Tuple<int, int> EvaluateGuess(char[] secretCode, char[] guess)
+        {
+            int wellPlaced = 0;
+            int misplaced = 0;
+
+            bool[] secretUsed = new bool[4];
+            bool[] guessUsed = new bool[4];
+
+            // Première passe : compte les bien placés
+            for (int i = 0; i < 4; i++)
+            {
+                if (guess[i] == secretCode[i])
+                {
+                    wellPlaced++;
+                    secretUsed[i] = true;
+                    guessUsed[i] = true;
+                }
+            }
+
+            // Deuxième passe : compte les mal placés
+            for (int i = 0; i < 4; i++)
+            {
+                if (guessUsed[i])
+                    continue;
+
+                for (int j = 0; j < 4; j++)
+                {
+                    if (!secretUsed[j] && guess[i] == secretCode[j])
+                    {
+                        misplaced++;
+                        secretUsed[j] = true;
+                        break;
+                    }
+                }
+            }
+
+            return new Tuple<int, int>(wellPlaced, misplaced);
+        }
+
         static void DisplayColoredCode(char[] code)
         {
             foreach (char c in code)
@@ -368,53 +552,106 @@ namespace Mastermind_Mayoraz
             }
             Console.WriteLine();
         }
-        /// <summary>
-        /// Méthode de fin de partie (affiche un texte et retourne au menu quand on clique sur une touche) 
-        /// </summary>
-        static void EndGame()
-        {
-            Console.WriteLine("\nAppuyez sur une touche pour revenir au menu...");
-            Console.ReadKey();
-        }
-        /// <summary>
-        /// Méthode qui vérifie les entrées de l'utilisateur pour voir si celles-ci correspondent au tableau initial 
-        /// </summary>
-        /// <param name="secret">tableau initial qui contient les couleurs à deviner aléatoire ou créé par le joueur 2</param>
-        /// <param name="guess">tableau qui contient les couleurs entrées par l'utilisateur</param>
-        /// <returns> un tuple qui contient le nombre de couleurs bien placées et le nombre de couleurs mal placées mais qui sont dans le code secret</returns>
-        static Tuple<int, int> EvaluateGuess(char[] secret, char[] guess)
-        {
-            int wellPlaced = 0;
-            int misplaced = 0;
-            bool[] checkedSecret = new bool[4];
-            bool[] checkedGuess = new bool[4];
 
-            for (int i = 0; i < 4; i++)
+        static void ShowStats()
+        {
+            Console.Clear();
+            Title();
+
+            int totalGames = gamesWon + gamesLost;
+
+            Console.WriteLine($"Parties jouées : {totalGames}");
+            Console.WriteLine($"Parties gagnées : {gamesWon}");
+            Console.WriteLine($"Parties perdues : {gamesLost}");
+
+            if (totalGames > 0)
             {
-                if (guess[i] == secret[i])
-                {
-                    wellPlaced++;
-                    checkedSecret[i] = true;
-                    checkedGuess[i] = true;
-                }
+                double winRate = (double)gamesWon / totalGames * 100;
+                Console.WriteLine($"Taux de victoire : {winRate:F1}%");
             }
 
-            for (int i = 0; i < 4; i++)
+            if (gamesWon > 0)
             {
-                if (checkedGuess[i]) continue;
+                TimeSpan avgTime = new TimeSpan(totalTime.Ticks / gamesWon);
+                Console.WriteLine($"Temps moyen pour gagner : {avgTime.Minutes} min {avgTime.Seconds} sec");
+            }
+            else
+            {
+                Console.WriteLine("Aucune victoire enregistrée, pas de temps moyen à afficher.");
+            }
 
-                for (int j = 0; j < 4; j++)
+            Console.WriteLine();
+            Console.Write("Appuyez sur une touche pour revenir au menu principal...");
+            Console.ReadKey();
+        }
+
+        static void LoadStats()
+        {
+            try
+            {
+                if (File.Exists(statsFileName))
                 {
-                    if (!checkedSecret[j] && guess[i] == secret[j])
+                    string[] lines = File.ReadAllLines(statsFileName);
+                    if (lines.Length >= 3)
                     {
-                        misplaced++;
-                        checkedSecret[j] = true;
-                        break;
+                        gamesWon = int.Parse(lines[0]);
+                        gamesLost = int.Parse(lines[1]);
+                        totalTime = TimeSpan.FromTicks(long.Parse(lines[2]));
                     }
                 }
             }
+            catch (Exception)
+            {
+                // En cas d'erreur, on garde les valeurs par défaut (0)
+                gamesWon = 0;
+                gamesLost = 0;
+                totalTime = TimeSpan.Zero;
+            }
+        }
 
-            return Tuple.Create(wellPlaced, misplaced);
+        static void SaveStats()
+        {
+            try
+            {
+                string[] lines = new string[3];
+                lines[0] = gamesWon.ToString();
+                lines[1] = gamesLost.ToString();
+                lines[2] = totalTime.Ticks.ToString();
+                File.WriteAllLines(statsFileName, lines);
+            }
+            catch (Exception)
+            {
+                // En cas d'erreur de sauvegarde, on ignore silencieusement
+                // pour ne pas interrompre le jeu
+            }
+        }
+
+        static void EndGame()
+        {
+            Console.WriteLine("\nQue voulez-vous faire ?");
+            Console.WriteLine("1 - Revenir au menu principal");
+            Console.WriteLine("2 - Quitter");
+
+            while (true)
+            {
+                Console.Write("Votre choix : ");
+                string input = Console.ReadLine();
+
+                switch (input)
+                {
+                    case "1":
+                        return;
+                    case "2":
+                        SaveStats();
+                        Environment.Exit(0);
+                        break;
+                    default:
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Choix invalide, veuillez réessayer.");
+                        Console.ResetColor();
+                        break;
+                }
+            }
         }
     }
 }
