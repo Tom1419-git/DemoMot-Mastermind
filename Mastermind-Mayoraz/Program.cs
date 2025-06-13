@@ -29,6 +29,14 @@ namespace Mastermind_Mayoraz
         // Déclare une constante entière représentant le nombre maximum de tentatives autorisées.
         // Cette valeur est fixe et ne peut pas être modifiée.
         const int maxAttempts = 10;
+
+        
+
+        // Statistiques globales
+        static int gamesWon = 0;
+        static int gamesLost = 0;
+        static TimeSpan totalTime = TimeSpan.Zero;
+        const string statsFileName = "mastermind_stats.txt";
         static void Main(string[] args)
         {
             while (true)
@@ -43,8 +51,10 @@ namespace Mastermind_Mayoraz
                 Console.WriteLine("Choisissez un mode de jeu :");
                 Console.WriteLine("1 - Mode Solo");
                 Console.WriteLine("2 - Mode Deux Joueurs");
-                Console.WriteLine("3 - Règles du jeu");
-                Console.WriteLine("4 - Quitter");
+                Console.WriteLine("3 - Mode Challenge (temps limité)");
+                Console.WriteLine("4 - Règles du jeu");
+                Console.WriteLine("5 - Statistiques");
+                Console.WriteLine("6 - Quitter");
                 Console.Write("Votre choix : ");
                 string input = Console.ReadLine();
 
@@ -57,9 +67,17 @@ namespace Mastermind_Mayoraz
                         PlayTwoPlayers();
                         break;
                     case "3":
-                        ShowRules();
+                        Console.CursorVisible = false;
+                        //PlayChallenge();                    to do 
                         break;
                     case "4":
+                        ShowRules();
+                        break;
+                    case "5":
+                        //ShowStats();                        to do 
+                        break;
+                    case "6":
+                        //SaveStats();                        to do
                         return;
                     default:
                         Console.WriteLine("Choix invalide. Appuyez sur une touche pour recommencer.");
