@@ -1,0 +1,9 @@
+C:\Users\pp10xia\Documents\GitHub\DemoMot-Mastermind\Mastermind-Mayoraz_DemoMot\bin\Debug\Mastermind-Mayoraz_DemoMot.exe.config
+C:\Users\pp10xia\Documents\GitHub\DemoMot-Mastermind\Mastermind-Mayoraz_DemoMot\bin\Debug\Mastermind-Mayoraz_DemoMot.exe
+C:\Users\pp10xia\Documents\GitHub\DemoMot-Mastermind\Mastermind-Mayoraz_DemoMot\bin\Debug\Mastermind-Mayoraz_DemoMot.pdb
+C:\Users\pp10xia\Documents\GitHub\DemoMot-Mastermind\Mastermind-Mayoraz_DemoMot\obj\Debug\Mastermind-Mayoraz_DemoMot.csproj.AssemblyReference.cache
+C:\Users\pp10xia\Documents\GitHub\DemoMot-Mastermind\Mastermind-Mayoraz_DemoMot\obj\Debug\Mastermind-Mayoraz_DemoMot.csproj.CoreCompileInputs.cache
+C:\Users\pp10xia\Documents\GitHub\DemoMot-Mastermind\Mastermind-Mayoraz_DemoMot\obj\Debug\Mastermind-Mayoraz_DemoMot.csproj.Fody.CopyLocal.cache
+C:\Users\pp10xia\Documents\GitHub\DemoMot-Mastermind\Mastermind-Mayoraz_DemoMot\obj\Debug\Mastermind-Mayoraz_DemoMot.csproj.Fody.RuntimeCopyLocal.cache
+C:\Users\pp10xia\Documents\GitHub\DemoMot-Mastermind\Mastermind-Mayoraz_DemoMot\obj\Debug\Mastermind-Mayoraz_DemoMot.exe
+C:\Users\pp10xia\Documents\GitHub\DemoMot-Mastermind\Mastermind-Mayoraz_DemoMot\obj\Debug\Mastermind-Mayoraz_DemoMot.pdb

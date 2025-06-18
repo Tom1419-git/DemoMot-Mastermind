@@ -1,7 +1,0 @@
-C:\Users\pp10xia\Documents\GitHub\DemoMot-Mastermind\Mastermind-Mayoraz\bin\Debug\Mastermind-Mayoraz.exe.config
-C:\Users\pp10xia\Documents\GitHub\DemoMot-Mastermind\Mastermind-Mayoraz\bin\Debug\Mastermind-Mayoraz.exe
-C:\Users\pp10xia\Documents\GitHub\DemoMot-Mastermind\Mastermind-Mayoraz\bin\Debug\Mastermind-Mayoraz.pdb
-C:\Users\pp10xia\Documents\GitHub\DemoMot-Mastermind\Mastermind-Mayoraz\obj\Debug\Mastermind-Mayoraz.csproj.AssemblyReference.cache
-C:\Users\pp10xia\Documents\GitHub\DemoMot-Mastermind\Mastermind-Mayoraz\obj\Debug\Mastermind-Mayoraz.csproj.CoreCompileInputs.cache
-C:\Users\pp10xia\Documents\GitHub\DemoMot-Mastermind\Mastermind-Mayoraz\obj\Debug\Mastermind-Mayoraz.exe
-C:\Users\pp10xia\Documents\GitHub\DemoMot-Mastermind\Mastermind-Mayoraz\obj\Debug\Mastermind-Mayoraz.pdb
