@@ -175,3 +175,10 @@ Ce projet a été développé dans un cadre éducatif à l'ETML.
 ---
 
 **Amusez-vous et que la logique soit avec vous ! 🧠🎯**
+---
+
+<div align="center">
+
+[![Profile](https://img.shields.io/badge/👤_Profil_GitHub-Tom1419--git-181717?style=flat-square&logo=github)](https://github.com/Tom1419-git)
+
+</div>
