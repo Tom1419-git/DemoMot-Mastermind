@@ -155,14 +155,14 @@ Le jeu affiche un titre ASCII art impressionnant et utilise des couleurs pour un
 ║   ██║ ╚═╝ ██║██║  ██║███████║   ██║   ███████╗██║  ██║██║ ╚═╝ ██║██║██║ ╚████║██████╔╝   ║
 ║   ╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═════╝    ║
 ║                                                                                          ║
-║                            CRÉÉ PAR : Thomas MAYORAZ (MIN1B)                             ║
+║                            CRÉÉ PAR : Thomas MAYORAZ                             ║
 ║                                PROJET : Démo-Mot - 2025                                  ║
 ╚══════════════════════════════════════════════════════════════════════════════════════════╝
 ```
 
 ## Auteur
 
-**Thomas MAYORAZ** - Étudiant MIN1B  
+**Thomas MAYORAZ** — Apprenti informaticien 3e année  
 Projet réalisé dans le cadre du module "Démo-Mot" à l'ETML en 2025.
 
 ---
